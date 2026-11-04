@@ -52,25 +52,29 @@ svg.chart{width:100%;height:auto;display:block}
 <body>
 <main>
 <h1>Quelle verrerie est la plus précise ?</h1>
-<p>On cherche à mesurer 50 mL de liquide avec chaque élément de verrerie ci-dessous.<br>Pour effectuer des statistiques sur l’erreur de prélèvement inhérente à chaque élément, chaque mesure devra être répétée 10 fois selon le protocole ci-dessous :</p>
+<h2>Objectifs</h2>
+<p>On cherche à mesurer 50 mL de liquide avec différents éléments de verrerie dans le but de quantifier leur précision de prélèvement.<br>Afin de réaliser des statistiques sur l’erreur de prélèvement inhérente à chaque élément de verrerie, on répète 10 fois le protocole ci-dessous pour chaque élément de verrerie.</p>
+<h2>Protocole (à mettre en œuvre avec la simulation fournie plus bas)</h2>
+<p>Pour l’un des éléments de verrerie à votre disposition :</p>
 <ul class="proto">
-<li>Choisir un élément de verrerie parmi les quatre proposés.</li>
 <li>Appuyer sur « Poser sur la balance » puis tarer la balance en appuyant sur « Tare » (la balance se situe en bas de la simulation).</li>
 <li>Appuyer sur « Retirer de la balance ».</li>
 <li>Appuyer sur « Remplir » jusqu’à atteindre la graduation 50 mL avec l’élément de verrerie choisi, le plus précisément possible.</li>
 <li>Appuyer sur « Poser sur la balance ».</li>
-<li>Appuyer sur « Noter la mesure ».</li>
+<li>Appuyer sur « Noter la mesure » (cela enregistre les mesures dans l’onglet « Résultats » en bas de la page).</li>
 <li>Appuyer sur « Vider ».</li>
-<li>Répéter 9 autres fois avec le même élément de verrerie.</li>
+<li>Répéter les étapes précédentes 9 autres fois avec le même élément de verrerie.</li>
+<li>Répéter le protocole avec les autres éléments de verrerie. Attention, lorsque vous changez d’élément de verrerie, n’oubliez pas de le retirer de la balance.</li>
 </ul>
-<p>Lorsque vous changez d’élément de verrerie, ne pas oublier de le retirer de la balance.</p>
-<p>Les résultats des mesures sont situés en bas de la page. Vous y trouverez :</p>
+<h2>Résultats</h2>
+<p>Les résultats des mesures liées aux prélèvements que vous avez réalisés sont situés en bas de la page. Vous y trouverez :</p>
 <ul class="proto">
-<li>Le volume moyen qui a été prélevé par l’élément de verrerie au cours des 10 mesures indépendantes effectuées.</li>
-<li>L’erreur moyenne de prélèvement qui est réalisée par l’élément de verrerie (écart positif entre les 50 mL attendus et le volume qui a en moyenne été prélevé au cours des 10 mesures).</li>
-<li>L’erreur relative de prélèvement qui est réalisée par l’élément de verrerie (pourcentage d’erreur sur le prélèvement par rapport à la valeur de 50 mL attendue).</li>
+<li>Le volume moyen qui a réellement été prélevé par l’élément de verrerie sur les 10 prélèvements que vous avez réalisés avec.</li>
+<li>L’erreur moyenne de prélèvement qui a été réalisée par l’élément de verrerie (écart positif entre les 50 mL attendus et le volume qui a réellement été prélevé en moyenne sur vos 10 prélèvements).</li>
+<li>L’erreur relative de prélèvement qui a été réalisée par l’élément de verrerie (pourcentage d’erreur obtenu en moyenne sur le volume réellement prélevé par rapport aux 50 mL attendus).</li>
 </ul>
 
+<h2 style="font-size:1.6rem;margin-top:24px">Simulation</h2>
 <div class="grid" id="vessels"></div>
 
 <section class="card">
