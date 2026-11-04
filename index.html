@@ -55,7 +55,7 @@ svg.chart{width:100%;height:auto;display:block}
 <p>On cherche à mesurer 50 mL de liquide avec chaque élément de verrerie ci-dessous.<br>Pour effectuer des statistiques sur l’erreur de prélèvement inhérente à chaque élément, chaque mesure devra être répétée 10 fois selon le protocole ci-dessous :</p>
 <ul class="proto">
 <li>Choisir un élément de verrerie parmi les quatre proposés.</li>
-<li>Appuyer sur « Poser sur la balance » puis tarer la balance en appuyant sur « Tare » (la balance se trouve en bas de la simulation).</li>
+<li>Appuyer sur « Poser sur la balance » puis tarer la balance en appuyant sur « Tare » (la balance se situe en bas de la simulation).</li>
 <li>Appuyer sur « Retirer de la balance ».</li>
 <li>Appuyer sur « Remplir » jusqu’à atteindre la graduation 50 mL avec l’élément de verrerie choisi, le plus précisément possible.</li>
 <li>Appuyer sur « Poser sur la balance ».</li>
@@ -64,6 +64,12 @@ svg.chart{width:100%;height:auto;display:block}
 <li>Répéter 9 autres fois avec le même élément de verrerie.</li>
 </ul>
 <p>Lorsque vous changez d’élément de verrerie, ne pas oublier de le retirer de la balance.</p>
+<p>Les résultats des mesures sont situés en bas de la page. Vous y trouverez :</p>
+<ul class="proto">
+<li>Le volume moyen qui a été prélevé par l’élément de verrerie au cours des 10 mesures indépendantes effectuées.</li>
+<li>L’erreur moyenne de prélèvement qui est réalisée par l’élément de verrerie (écart positif entre les 50 mL attendus et le volume qui a en moyenne été prélevé au cours des 10 mesures).</li>
+<li>L’erreur relative de prélèvement qui est réalisée par l’élément de verrerie (pourcentage d’erreur sur le prélèvement par rapport à la valeur de 50 mL attendue).</li>
+</ul>
 
 <div class="grid" id="vessels"></div>
 
@@ -94,7 +100,7 @@ svg.chart{width:100%;height:auto;display:block}
 const RHO=1;
 const g=()=>Math.sqrt(-2*Math.log(1-Math.random()))*Math.cos(2*Math.PI*Math.random());
 const P=[
-{id:'b',name:'Bécher 250 mL',col:'var(--cb)',empty:98.4,rs:2.0,bs:1.5,T:50,mark:133.6,mx1:24,mx2:112,d:'M16 14 Q22 14 24 18 L24 200 Q24 208 32 208 L104 208 Q112 208 112 200 L112 18 Q114 14 120 14',c:'M24 14 L24 200 Q24 208 32 208 L104 208 Q112 208 112 200 L112 14',t:[[168.8,24,38,'50',42],[133.6,24,38,'100',42],[98.4,24,38,'150',42],[63.2,24,38,'200',42],[28,24,38,'250',42]]},
+{id:'b',name:'Bécher 250 mL',col:'var(--cb)',empty:98.4,rs:2.8,bs:2.0,T:50,mark:133.6,mx1:24,mx2:112,d:'M16 14 Q22 14 24 18 L24 200 Q24 208 32 208 L104 208 Q112 208 112 200 L112 18 Q114 14 120 14',c:'M24 14 L24 200 Q24 208 32 208 L104 208 Q112 208 112 200 L112 14',t:[[168.8,24,38,'50',42],[133.6,24,38,'100',42],[98.4,24,38,'150',42],[63.2,24,38,'200',42],[28,24,38,'250',42]]},
 {id:'r',name:'Erlenmeyer 250 mL',col:'var(--cr)',empty:63.4,rs:2.5,bs:2,T:50,mark:168,mx1:21,mx2:99,d:'M42 12 L46 12 L46 50 L14 196 Q12 206 24 206 L96 206 Q108 206 106 196 L74 50 L74 12 L78 12',c:'M46 12 L46 50 L14 196 Q12 206 24 206 L96 206 Q108 206 106 196 L74 50 L74 12',t:[[184.2,17,29,'50',32],[168,20,32,'100',35],[148.4,24,36,'150',39],[122.2,30,42,'200',45],[78,40,52,'250',55]]},
 {id:'e',name:'Éprouvette graduée 100 mL',col:'var(--ce)',empty:118.6,rs:0.4,bs:0.3,T:50,mm:3.2,wx:[46,74],my:999,mark:26,mx1:46,mx2:74,d:'M42 12 L46 14 L46 196 L28 206 L28 212 L92 212 L92 206 L74 196 L74 14 L78 12',c:'M46 14 L46 194 L74 194 L74 14',t:[[175.4,60,74,'10',78],[158.8,60,74,'20',78],[142.2,60,74,'30',78],[125.6,60,74,'40',78],[109,60,74,'50',78],[92.4,60,74,'60',78],[75.8,60,74,'70',78],[59.2,60,74,'80',78],[42.6,60,74,'90',78],[26,60,74,'100',78]]},
 {id:'f',name:'Fiole jaugée 50 mL',col:'var(--cf)',empty:62.5,rs:0.05,bs:0.03,T:50,mm:2.4,wx:[54,66],my:118,mark:56,mx1:49,mx2:71,lx:75,d:'M48 8 L54 8 L54 120 C34 128 14 144 14 164 C14 188 34 200 60 200 C86 200 106 188 106 164 C106 144 86 128 66 120 L66 8 L72 8'}
@@ -121,7 +127,7 @@ P.forEach(p=>{const y=V[p.id]>0?LEV[p.id](V[p.id]):300;$('w'+p.id).setAttribute(
 const net=massOn()-tare;$('lcd').textContent=hold?' ':fr(net)+' g';
 $('pan').textContent=on?'Sur le plateau : '+P.find(p=>p.id==on).name:'Plateau vide';
 const rows=P.map(p=>{const v=rec.filter(r=>r.id==p.id).map(r=>r.v);if(!v.length)return'';const n=v.length,m=v.reduce((a,b)=>a+b,0)/n;const s=n>1?Math.sqrt(v.reduce((a,b)=>a+(b-m)**2,0)/(n-1)):NaN;
-return`<tr><td><span class="dot" style="background:${p.col}"></span>${p.name}</td><td>${n}</td><td>${fr(m)}</td><td>${fr(v.reduce((a,x)=>a+Math.abs(x-p.T),0)/n)}</td><td>${fr(v.reduce((a,x)=>a+Math.abs(x-p.T)/p.T*100,0)/n)} %</td></tr>`}).join('');
+return`<tr><td><span class="dot" style="background:${p.col}"></span>${p.name}</td><td>${n}</td><td>${fr(m)}</td><td>${fr(Math.abs(m-p.T))}</td><td>${fr(Math.abs(m-p.T)/p.T*100)} %</td></tr>`}).join('');
 $('rows').innerHTML=rows||'<tr><td colspan="5" style="text-align:left;color:var(--mute)">Aucune mesure pour l’instant : remplissez une pièce, posez-la sur la balance et notez la mesure.</td></tr>';
 const X=v=>20+(Math.min(6,Math.max(-6,v))+6)/12*560;
 let c='';for(let t=-6;t<=6;t+=2)c+=`<line x1="${X(t)}" x2="${X(t)}" y1="12" y2="162" stroke="var(--line)"/><text class="lbl" x="${X(t)}" y="180" text-anchor="middle">${t}</text>`;
