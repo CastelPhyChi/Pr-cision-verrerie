@@ -70,8 +70,8 @@ svg.chart{width:100%;height:auto;display:block}
 <p>Les résultats des mesures liées aux prélèvements que vous avez réalisés sont situés en bas de la page. Vous y trouverez :</p>
 <ul class="proto">
 <li>Le volume moyen qui a réellement été prélevé par l’élément de verrerie sur les 10 prélèvements que vous avez réalisés avec.</li>
-<li>L’erreur moyenne de prélèvement qui a été réalisée par l’élément de verrerie (écart positif entre les 50 mL attendus et le volume qui a réellement été prélevé en moyenne sur vos 10 prélèvements).</li>
-<li>L’erreur relative de prélèvement qui a été réalisée par l’élément de verrerie (pourcentage d’erreur obtenu en moyenne sur le volume réellement prélevé par rapport aux 50 mL attendus).</li>
+<li>L’erreur moyenne de prélèvement qui a été réalisée par l’élément de verrerie (moyenne des écarts, pris en valeur absolue, entre le volume réellement prélevé à chaque prélèvement et les 50 mL attendus).</li>
+<li>L’erreur relative de prélèvement qui a été réalisée par l’élément de verrerie (erreur absolue moyenne exprimée en pourcentage des 50 mL attendus).</li>
 </ul>
 
 <h2 style="font-size:1.6rem;margin-top:24px">Simulation</h2>
@@ -103,13 +103,15 @@ svg.chart{width:100%;height:auto;display:block}
 <script>
 const RHO=1;
 const g=()=>Math.sqrt(-2*Math.log(1-Math.random()))*Math.cos(2*Math.PI*Math.random());
+// e : plage [min, max] de l'erreur artificielle (fraction de la masse réelle), signe tiré au hasard à chaque remplissage
 const P=[
-{id:'b',name:'Bécher 250 mL',col:'var(--cb)',empty:98.4,rs:2.8,bs:2.0,T:50,mark:133.6,mx1:24,mx2:112,d:'M16 14 Q22 14 24 18 L24 200 Q24 208 32 208 L104 208 Q112 208 112 200 L112 18 Q114 14 120 14',c:'M24 14 L24 200 Q24 208 32 208 L104 208 Q112 208 112 200 L112 14',t:[[168.8,24,38,'50',42],[133.6,24,38,'100',42],[98.4,24,38,'150',42],[63.2,24,38,'200',42],[28,24,38,'250',42]]},
-{id:'r',name:'Erlenmeyer 250 mL',col:'var(--cr)',empty:63.4,rs:2.5,bs:2,T:50,mark:168,mx1:21,mx2:99,d:'M42 12 L46 12 L46 50 L14 196 Q12 206 24 206 L96 206 Q108 206 106 196 L74 50 L74 12 L78 12',c:'M46 12 L46 50 L14 196 Q12 206 24 206 L96 206 Q108 206 106 196 L74 50 L74 12',t:[[184.2,17,29,'50',32],[168,20,32,'100',35],[148.4,24,36,'150',39],[122.2,30,42,'200',45],[78,40,52,'250',55]]},
-{id:'e',name:'Éprouvette graduée 100 mL',col:'var(--ce)',empty:118.6,rs:0.4,bs:0.3,T:50,mm:3.2,wx:[46,74],my:999,mark:26,mx1:46,mx2:74,d:'M42 12 L46 14 L46 196 L28 206 L28 212 L92 212 L92 206 L74 196 L74 14 L78 12',c:'M46 14 L46 194 L74 194 L74 14',t:[[175.4,60,74,'10',78],[158.8,60,74,'20',78],[142.2,60,74,'30',78],[125.6,60,74,'40',78],[109,60,74,'50',78],[92.4,60,74,'60',78],[75.8,60,74,'70',78],[59.2,60,74,'80',78],[42.6,60,74,'90',78],[26,60,74,'100',78]]},
-{id:'f',name:'Fiole jaugée 50 mL',col:'var(--cf)',empty:62.5,rs:0.05,bs:0.03,T:50,mm:2.4,wx:[54,66],my:118,mark:56,mx1:49,mx2:71,lx:75,d:'M48 8 L54 8 L54 120 C34 128 14 144 14 164 C14 188 34 200 60 200 C86 200 106 188 106 164 C106 144 86 128 66 120 L66 8 L72 8'}
+{id:'b',name:'Bécher 250 mL',col:'var(--cb)',empty:98.4,rs:2.8,e:[0.05,0.10],T:50,mark:133.6,mx1:24,mx2:112,d:'M16 14 Q22 14 24 18 L24 200 Q24 208 32 208 L104 208 Q112 208 112 200 L112 18 Q114 14 120 14',c:'M24 14 L24 200 Q24 208 32 208 L104 208 Q112 208 112 200 L112 14',t:[[168.8,24,38,'50',42],[133.6,24,38,'100',42],[98.4,24,38,'150',42],[63.2,24,38,'200',42],[28,24,38,'250',42]]},
+{id:'r',name:'Erlenmeyer 250 mL',col:'var(--cr)',empty:63.4,rs:2.5,e:[0.05,0.10],T:50,mark:168,mx1:21,mx2:99,d:'M42 12 L46 12 L46 50 L14 196 Q12 206 24 206 L96 206 Q108 206 106 196 L74 50 L74 12 L78 12',c:'M46 12 L46 50 L14 196 Q12 206 24 206 L96 206 Q108 206 106 196 L74 50 L74 12',t:[[184.2,17,29,'50',32],[168,20,32,'100',35],[148.4,24,36,'150',39],[122.2,30,42,'200',45],[78,40,52,'250',55]]},
+{id:'e',name:'Éprouvette graduée 100 mL',col:'var(--ce)',empty:118.6,rs:0.4,e:[0.01,0.04],T:50,mm:3.2,wx:[46,74],my:999,mark:26,mx1:46,mx2:74,d:'M42 12 L46 14 L46 196 L28 206 L28 212 L92 212 L92 206 L74 196 L74 14 L78 12',c:'M46 14 L46 194 L74 194 L74 14',t:[[175.4,60,74,'10',78],[158.8,60,74,'20',78],[142.2,60,74,'30',78],[125.6,60,74,'40',78],[109,60,74,'50',78],[92.4,60,74,'60',78],[75.8,60,74,'70',78],[59.2,60,74,'80',78],[42.6,60,74,'90',78],[26,60,74,'100',78]]},
+{id:'f',name:'Fiole jaugée 50 mL',col:'var(--cf)',empty:62.5,rs:0.05,e:[0.001,0.005],T:50,mm:2.4,wx:[54,66],my:118,mark:56,mx1:49,mx2:71,lx:75,d:'M48 8 L54 8 L54 120 C34 128 14 144 14 164 C14 188 34 200 60 200 C86 200 106 188 106 164 C106 144 86 128 66 120 L66 8 L72 8'}
 ];
-P.forEach(p=>p.bias=g()*p.bs);
+const rndE=p=>(Math.random()<0.5?-1:1)*(p.e[0]+Math.random()*(p.e[1]-p.e[0]));
+const E={b:0,r:0,e:0,f:0};
 const erlV=d=>{const a=46.4,s=0.2192;return d<=148?Math.PI*(a*a*d-a*s*d*d+s*s*d*d*d/3):Math.PI*(a*a*148-a*s*148*148+s*s*148**3/3)+Math.PI*196*(d-148)};
 const LEV={b:I=>204-0.704*I,e:I=>192-1.66*I,
 r:I=>{const t=I*1754;let lo=0,hi=186;for(let i=0;i<30;i++){const m=(lo+hi)/2;erlV(m)<t?lo=m:hi=m}return 198-(lo+hi)/2},
@@ -125,16 +127,17 @@ $('vessels').innerHTML=P.map(p=>`<div class="card vessel"><h2><span class="dot" 
 ${p.mm?`<g id="m${p.id}" style="display:none"><path fill="var(--liq)" opacity=".5"/><path fill="none" stroke="var(--ink)" stroke-width="1"/></g>`:''}<path class="glass" d="${p.d}"/>${p.id=='f'?`<line class="tk" x1="${p.mx1}" x2="${p.mx2}" y1="${p.mark}" y2="${p.mark}"/>`:''}
 ${p.lx?`<text class="lbl" x="${p.lx}" y="${p.mark+4}">${p.T} mL</text>`:''}${(p.t||[]).map(t=>`<line class="tk" x1="${t[1]}" x2="${t[2]}" y1="${t[0]}" y2="${t[0]}"/><text class="tl" x="${t[4]}" y="${t[0]+3}">${t[3]}</text>`).join('')}</svg>
 <div class="btns"><button data-h="${p.id}" class="main">Remplir (maintenir)</button><button data-a="drop" data-p="${p.id}">+1 goutte</button><button data-a="empty" data-p="${p.id}">Vider</button><button data-a="pose" data-p="${p.id}" id="pose${p.id}">Poser sur la balance</button></div></div>`).join('');
-const bi=id=>P.find(p=>p.id==id).bias;const massOn=()=>on?P.find(p=>p.id==on).empty+(V[on]>0?V[on]+bi(on):0)*RHO:0;
+const liqMass=id=>V[id]*(1+E[id])*RHO;
+const massOn=()=>on?P.find(p=>p.id==on).empty+liqMass(on):0;
 function draw(){
 P.forEach(p=>{const y=V[p.id]>0?LEV[p.id](V[p.id]):300;$('w'+p.id).setAttribute('y',y);const mn=$('m'+p.id);if(mn){const show=V[p.id]>0&&y<p.my;mn.style.display=show?'':'none';if(show){const m=p.mm,x1=p.wx[0],x2=p.wx[1],xc=(x1+x2)/2;mn.firstChild.setAttribute('d',`M${x1} ${y-m} Q${xc} ${y+m} ${x2} ${y-m} L${x2} ${y} L${x1} ${y} Z`);mn.lastChild.setAttribute('d',`M${x1} ${y-m} Q${xc} ${y+m} ${x2} ${y-m}`)}}const pb=$('pose'+p.id),isOn=on==p.id;pb.textContent=isOn?'Retirer de la balance':'Poser sur la balance';pb.classList.toggle('rd',isOn);pb.classList.toggle('gv',!isOn)});
-const net=massOn()-tare;$('lcd').textContent=hold?' ':fr(net)+' g';
+const net=massOn()-tare;$('lcd').textContent=hold?' ':fr(net)+' g';
 $('pan').textContent=on?'Sur le plateau : '+P.find(p=>p.id==on).name:'Plateau vide';
-const rows=P.map(p=>{const v=rec.filter(r=>r.id==p.id).map(r=>r.v);if(!v.length)return'';const n=v.length,m=v.reduce((a,b)=>a+b,0)/n;const s=n>1?Math.sqrt(v.reduce((a,b)=>a+(b-m)**2,0)/(n-1)):NaN;
-return`<tr><td><span class="dot" style="background:${p.col}"></span>${p.name}</td><td>${n}</td><td>${fr(m)}</td><td>${fr(Math.abs(m-p.T))}</td><td>${fr(Math.abs(m-p.T)/p.T*100)} %</td></tr>`}).join('');
+const rows=P.map(p=>{const v=rec.filter(r=>r.id==p.id).map(r=>r.v);if(!v.length)return'';const n=v.length,m=v.reduce((a,b)=>a+b,0)/n;const ec=v.map(x=>x-p.T);const mae=ec.reduce((a,d)=>a+Math.abs(d),0)/n;
+return`<tr><td><span class="dot" style="background:${p.col}"></span>${p.name}</td><td>${n}</td><td>${fr(m)}</td><td>${fr(mae)}</td><td>${fr(mae/p.T*100)} %</td></tr>`}).join('');
 $('rows').innerHTML=rows||'<tr><td colspan="5" style="text-align:left;color:var(--mute)">Aucune mesure pour l’instant : remplissez une pièce, posez-la sur la balance et notez la mesure.</td></tr>';
-const X=v=>20+(Math.min(6,Math.max(-6,v))+6)/12*560;
-let c='';for(let t=-6;t<=6;t+=2)c+=`<line x1="${X(t)}" x2="${X(t)}" y1="12" y2="162" stroke="var(--line)"/><text class="lbl" x="${X(t)}" y="180" text-anchor="middle">${t}</text>`;
+const X=v=>20+(Math.min(12,Math.max(-12,v))+12)/24*560;
+let c='';for(let t=-12;t<=12;t+=4)c+=`<line x1="${X(t)}" x2="${X(t)}" y1="12" y2="162" stroke="var(--line)"/><text class="lbl" x="${X(t)}" y="180" text-anchor="middle">${t}</text>`;
 c+=`<line x1="${X(0)}" x2="${X(0)}" y1="8" y2="166" stroke="var(--ink)" stroke-width="2"/>`;
 P.forEach((p,i)=>rec.filter(r=>r.id==p.id).forEach(r=>{c+=`<circle cx="${X((r.v-p.T)/p.T*100)}" cy="${30+i*34}" r="6" fill="${p.col}" opacity=".6"/>`}));
 c+='<text class="lbl" x="300" y="197" text-anchor="middle">Écart relatif au volume visé (%)</text>';$('chart').innerHTML=c;}
@@ -142,14 +145,14 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||
 if(a=='drop'){add(id,0.05)}
 else if(a=='empty'){V[id]=0}
 else if(a=='pose'){if(on&&on!=id)say('Retirez d’abord l’autre pièce de la balance.');else on=on==id?null:id}
-else if(a=='auto'){const p=P.find(x=>x.id==id);for(let i=0;i<10;i++){const v=p.T+p.bias+g()*p.rs;rec.push({id,v:+(v*RHO).toFixed(2)/RHO})}say('10 mesures ajoutées pour : '+p.name+'.')}
+else if(a=='auto'){const p=P.find(x=>x.id==id);for(let i=0;i<10;i++){const v=(p.T+g()*p.rs)*(1+rndE(p));rec.push({id,v:+(v*RHO).toFixed(2)/RHO})}say('10 mesures ajoutées pour : '+p.name+'.')}
 draw()});
 $('tare').onclick=()=>{tare=massOn();say('');draw()};
 $('clear').onclick=()=>{rec=[];say('');draw()};
 $('note').onclick=()=>{if(!on)return say('Posez d’abord une pièce remplie sur la balance.');if(V[on]<=0)return say('La pièce est vide : remplissez-la avant de noter.');
-const net=+(massOn()-tare).toFixed(2);if(Math.abs(net-(V[on]+bi(on))*RHO)>15)return say('Masse incohérente : avez-vous fait la tare avec la pièce vide ?');
+const net=+(massOn()-tare).toFixed(2);if(Math.abs(net-liqMass(on))>15)return say('Masse incohérente : avez-vous fait la tare avec la pièce vide ?');
 rec.push({id:on,v:net/RHO});say('Mesure notée : '+fr(net)+' g.');draw()};
-function add(id,dv){V[id]=Math.min(CAP[id],V[id]+dv);if(V[id]>=CAP[id])say('Ça déborde : videz la pièce.');draw()}
+function add(id,dv){if(V[id]<=0)E[id]=rndE(P.find(p=>p.id==id));V[id]=Math.min(CAP[id],V[id]+dv);if(V[id]>=CAP[id])say('Ça déborde : videz la pièce.');draw()}
 let hold=null;
 function startHold(id){if(hold)return;say('');hold={id,t0:performance.now(),last:performance.now()};requestAnimationFrame(tick)}
 function tick(now){if(!hold)return;const dt=(now-hold.last)/1000,th=(now-hold.t0)/1000;hold.last=now;add(hold.id,Math.min(60,6+30*th)*dt);requestAnimationFrame(tick)}
